@@ -1,0 +1,829 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "ServerlessDeploymentBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "ServerlessDeploymentBucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "ServerlessDeploymentBucket"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "ServerlessDeploymentBucket"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": false
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "CommandCreatePatientLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/sless-cqrs-patients-dev-commandCreatePatient"
+      }
+    },
+    "QueryGetPatientsLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/sless-cqrs-patients-dev-queryGetPatients"
+      }
+    },
+    "CommunicationSaveEventCreatePatientLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/sless-cqrs-patients-dev-communicationSaveEventCreatePatient"
+      }
+    },
+    "CommunicationSaveStatePatientLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/sless-cqrs-patients-dev-communicationSaveStatePatient"
+      }
+    },
+    "IamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "sless-cqrs-patients",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/sless-cqrs-patients-dev*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/sless-cqrs-patients-dev*:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:Query",
+                    "dynamodb:Scan",
+                    "dynamodb:GetItem",
+                    "dynamodb:PutItem",
+                    "dynamodb:UpdateItem",
+                    "dynamodb:DeleteItem",
+                    "sns:*",
+                    "sqs:*"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "EventsPatientsDynamoDBTable",
+                        "Arn"
+                      ]
+                    },
+                    {
+                      "Fn::GetAtt": [
+                        "StatePatientsDynamoDBTable",
+                        "Arn"
+                      ]
+                    },
+                    "arn:aws:sns:eu-west-3:360639652554:create-patient",
+                    {
+                      "Fn::GetAtt": [
+                        "CreatePatientQueue",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "sless-cqrs-patients",
+              "dev",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        }
+      }
+    },
+    "CommandCreatePatientLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/sless-cqrs-patients/dev/1620119394088-2021-05-04T09:09:54.088Z/sless-cqrs-patients.zip"
+        },
+        "FunctionName": "sless-cqrs-patients-dev-commandCreatePatient",
+        "Handler": "commands.createPatient",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs12.x",
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "AWS_ACCOUNT_ID": "360639652554",
+            "EVENTS_PATIENTS_TABLE": "patients-events-table-dev",
+            "STATE_PATIENTS_TABLE": "patients-state-table-dev",
+            "SERVERLESS_REGION": "eu-west-3",
+            "SQS_QUEUE_URL": {
+              "Ref": "CreatePatientQueue"
+            }
+          }
+        }
+      },
+      "DependsOn": [
+        "CommandCreatePatientLogGroup"
+      ]
+    },
+    "CommandCreatePatientLambdaVersionTQkjcH4A8Mh6izfZHnG3aUDBp2Pe5GtwBsqnm3lpGYo": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "CommandCreatePatientLambdaFunction"
+        },
+        "CodeSha256": "IhDMtWnE+jiZ3HLi4Xu5HgJfPF4EHOHFg9rqI+EG3Pw="
+      }
+    },
+    "QueryGetPatientsLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/sless-cqrs-patients/dev/1620119394088-2021-05-04T09:09:54.088Z/sless-cqrs-patients.zip"
+        },
+        "FunctionName": "sless-cqrs-patients-dev-queryGetPatients",
+        "Handler": "queries.getPatients",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs12.x",
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "AWS_ACCOUNT_ID": "360639652554",
+            "EVENTS_PATIENTS_TABLE": "patients-events-table-dev",
+            "STATE_PATIENTS_TABLE": "patients-state-table-dev",
+            "SERVERLESS_REGION": "eu-west-3",
+            "SQS_QUEUE_URL": {
+              "Ref": "CreatePatientQueue"
+            }
+          }
+        }
+      },
+      "DependsOn": [
+        "QueryGetPatientsLogGroup"
+      ]
+    },
+    "QueryGetPatientsLambdaVersionWHbQ3LwXZNnt0phqELpVvvqxHpahnz8VCcqKd5cXVw": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "QueryGetPatientsLambdaFunction"
+        },
+        "CodeSha256": "IhDMtWnE+jiZ3HLi4Xu5HgJfPF4EHOHFg9rqI+EG3Pw="
+      }
+    },
+    "CommunicationSaveEventCreatePatientLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/sless-cqrs-patients/dev/1620119394088-2021-05-04T09:09:54.088Z/sless-cqrs-patients.zip"
+        },
+        "FunctionName": "sless-cqrs-patients-dev-communicationSaveEventCreatePatient",
+        "Handler": "communications.saveEventCreatePatient",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs12.x",
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "AWS_ACCOUNT_ID": "360639652554",
+            "EVENTS_PATIENTS_TABLE": "patients-events-table-dev",
+            "STATE_PATIENTS_TABLE": "patients-state-table-dev",
+            "SERVERLESS_REGION": "eu-west-3",
+            "SQS_QUEUE_URL": {
+              "Ref": "CreatePatientQueue"
+            }
+          }
+        }
+      },
+      "DependsOn": [
+        "CommunicationSaveEventCreatePatientLogGroup"
+      ]
+    },
+    "CommunicationSaveEventCreatePatientLambdaVersionSwBfE9MayBNAYOlyhRj4c90AP3XOR27N16P62cF7AFk": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "CommunicationSaveEventCreatePatientLambdaFunction"
+        },
+        "CodeSha256": "IhDMtWnE+jiZ3HLi4Xu5HgJfPF4EHOHFg9rqI+EG3Pw="
+      }
+    },
+    "CommunicationSaveStatePatientLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/sless-cqrs-patients/dev/1620119394088-2021-05-04T09:09:54.088Z/sless-cqrs-patients.zip"
+        },
+        "FunctionName": "sless-cqrs-patients-dev-communicationSaveStatePatient",
+        "Handler": "communications.saveStatePatient",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs12.x",
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "AWS_ACCOUNT_ID": "360639652554",
+            "EVENTS_PATIENTS_TABLE": "patients-events-table-dev",
+            "STATE_PATIENTS_TABLE": "patients-state-table-dev",
+            "SERVERLESS_REGION": "eu-west-3",
+            "SQS_QUEUE_URL": {
+              "Ref": "CreatePatientQueue"
+            }
+          }
+        }
+      },
+      "DependsOn": [
+        "CommunicationSaveStatePatientLogGroup"
+      ]
+    },
+    "CommunicationSaveStatePatientLambdaVersionYKe4TF9XvHDA2VtgEVAb8K8YmC4S9MQbgo1qPZVz4": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "CommunicationSaveStatePatientLambdaFunction"
+        },
+        "CodeSha256": "IhDMtWnE+jiZ3HLi4Xu5HgJfPF4EHOHFg9rqI+EG3Pw="
+      }
+    },
+    "ApiGatewayRestApi": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Name": "dev-sless-cqrs-patients",
+        "EndpointConfiguration": {
+          "Types": [
+            "EDGE"
+          ]
+        },
+        "Policy": ""
+      }
+    },
+    "ApiGatewayResourcePatients": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ApiGatewayRestApi",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "patients",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodPatientsPost": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "POST",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourcePatients"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "CommandCreatePatientLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      }
+    },
+    "ApiGatewayMethodPatientsGet": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourcePatients"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "QueryGetPatientsLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      }
+    },
+    "ApiGatewayDeployment1620119367287": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "StageName": "dev"
+      },
+      "DependsOn": [
+        "ApiGatewayMethodPatientsPost",
+        "ApiGatewayMethodPatientsGet"
+      ]
+    },
+    "CommandCreatePatientLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "CommandCreatePatientLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "QueryGetPatientsLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "QueryGetPatientsLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "SNSTopicCreatepatient": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "TopicName": "create-patient",
+        "DisplayName": "Patient create events",
+        "Subscription": [
+          {
+            "Endpoint": {
+              "Fn::GetAtt": [
+                "CommunicationSaveEventCreatePatientLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Protocol": "lambda"
+          },
+          {
+            "Endpoint": {
+              "Fn::GetAtt": [
+                "CommunicationSaveStatePatientLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Protocol": "lambda"
+          }
+        ]
+      }
+    },
+    "CommunicationSaveEventCreatePatientLambdaPermissionCreatepatientSNS": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "CommunicationSaveEventCreatePatientLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "sns.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":sns:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              "create-patient"
+            ]
+          ]
+        }
+      }
+    },
+    "CommunicationSaveStatePatientLambdaPermissionCreatepatientSNS": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "CommunicationSaveStatePatientLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "sns.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":sns:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              "create-patient"
+            ]
+          ]
+        }
+      }
+    },
+    "CreatePatientQueue": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "QueueName": "sqs-queue-create-patient"
+      }
+    },
+    "Subscription": {
+      "Type": "AWS::SNS::Subscription",
+      "Properties": {
+        "TopicArn": "arn:aws:sns:eu-west-3:360639652554:create-patient",
+        "Endpoint": {
+          "Fn::GetAtt": [
+            "CreatePatientQueue",
+            "Arn"
+          ]
+        },
+        "Protocol": "sqs",
+        "RawMessageDelivery": "true"
+      }
+    },
+    "AllowSNS2SQSPolicy": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "Queues": [
+          {
+            "Ref": "CreatePatientQueue"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2008-10-17",
+          "Id": "PublicationPolicy",
+          "Statement": [
+            {
+              "Sid": "Allow-SNS-SendMessage",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Action": [
+                "sqs:SendMessage"
+              ],
+              "Resource": {
+                "Fn::GetAtt": [
+                  "CreatePatientQueue",
+                  "Arn"
+                ]
+              },
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": "arn:aws:sns:eu-west-3:360639652554:create-patient"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "EventsPatientsDynamoDBTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "patients-events-table-dev",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        }
+      }
+    },
+    "StatePatientsDynamoDBTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "patients-state-table-dev",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": {
+        "Ref": "ServerlessDeploymentBucket"
+      }
+    },
+    "CommandCreatePatientLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "CommandCreatePatientLambdaVersionTQkjcH4A8Mh6izfZHnG3aUDBp2Pe5GtwBsqnm3lpGYo"
+      }
+    },
+    "QueryGetPatientsLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "QueryGetPatientsLambdaVersionWHbQ3LwXZNnt0phqELpVvvqxHpahnz8VCcqKd5cXVw"
+      }
+    },
+    "CommunicationSaveEventCreatePatientLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "CommunicationSaveEventCreatePatientLambdaVersionSwBfE9MayBNAYOlyhRj4c90AP3XOR27N16P62cF7AFk"
+      }
+    },
+    "CommunicationSaveStatePatientLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "CommunicationSaveStatePatientLambdaVersionYKe4TF9XvHDA2VtgEVAb8K8YmC4S9MQbgo1qPZVz4"
+      }
+    },
+    "ServiceEndpoint": {
+      "Description": "URL of the service endpoint",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "ApiGatewayRestApi"
+            },
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region"
+            },
+            ".",
+            {
+              "Ref": "AWS::URLSuffix"
+            },
+            "/dev"
+          ]
+        ]
+      }
+    }
+  }
+}
