@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./css/dashboard.css">
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Muli:300,700&display=swap" rel="stylesheet">
+
+    <!-- Ionic icons -->
+    <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+
+    <title>Health Twin - Dahsboard</title>
+</head>
+
+<body>
+    <div class="d-flex" id="content-wrapper">
+
+        <!-- Sidebar -->
+        <div id="sidebar-container" class="bg-primary">
+            <div class="logo">
+              <img src="./img/logo.png" alt="Logo de Health Twin" class="logo-ht">
+            </div>
+            <div class="menu">
+                <a href="./dashboard.html" class="d-block text-light p-3 border-0"><i class="icon ion-md-apps lead mr-2"></i></a>
+
+                <a href="./patient_list.html" class="d-block text-light p-3 border-0 active"><i class="icon ion-ios-people lead mr-2"></i></a>
+
+                <a href="./patient_dashboard.html" class="d-block text-light p-3 border-0"><i class="icon ion-md-stats lead mr-2"></i></a>
+                <a href="./profile.html" class="d-block text-light p-3 border-0"><i class="icon ion-md-person lead mr-2"></i></a>
+                <a href="./configuration.html" class="d-block text-light p-3 border-0"> <i class="icon ion-md-settings lead mr-2"></i></a>
+            </div>
+        </div>
+        <!-- Fin sidebar -->
+
+        <div class="w-100">
+
+         <!-- Navbar -->
+         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container">
+    
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+    
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="position-relative d-inline-block my-2">
+                    <a href="./help_page.html" class="btn btnHelp w-100 align-self-center">Guía de uso de la aplicación y Ayuda</a>
+                </div>
+                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                  <li class="nav-item dropdown">
+                    <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <img src="./img/gonzalo_profile_img.png" class="img-fluid rounded-circle avatar mr-2"
+                      alt="Foto de perfil" />
+                    Gonzalo Martín Amador
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="./profile.html">Mi perfil</a>
+                      <a class="dropdown-item" href="#">Ayúdanos a mejorar</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="./login_form.html">Cerrar sesión</a>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+          <!-- Fin Navbar -->
+
+        <!-- Page Content -->
+        <div id="content" class="bg-light w-100">
+              <section class="bg-light py-3">
+                <div class="container">
+                    <div class="rounded-card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-3 col-md-6 d-flex stat my-3">
+                                    <div class="mx-auto">
+                                        <h6 class="text-muted">Seguidores</h6>
+                                        <h3 class="font-weight-bold">642</h3>
+                                        <h6 class="text-success"><i class="icon ion-md-arrow-dropup-circle"></i> 5.25 %</h6>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 d-flex stat my-3">
+                                    <div class="mx-auto">
+                                        <h6 class="text-muted">Cuentas Alcanzadas</h6>
+                                        <h3 class="font-weight-bold">436</h3>
+                                        <h6 class="text-success"><i class="icon ion-md-arrow-dropup-circle"></i> 11.7 %</h6>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 d-flex stat my-3">
+                                    <div class="mx-auto">
+                                        <h6 class="text-muted">Interación con su contenido</h6>
+                                        <h3 class="font-weight-bold text-danger">4</h3>
+                                        <h6 class="text-danger"><i class="icon ion-md-arrow-dropdown-circle"></i> 45.60%</h6>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 d-flex stat my-3">
+                                    <div class="mx-auto">
+                                        <h6 class="text-muted">Sentimiento publicaciones</h6>
+                                        <h3 class="font-weight-bold">87 %</h3>
+                                        <h6 class="text-success"><i class="icon ion-md-arrow-dropup-circle"></i> 2.70 %</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              </section>
+
+              <section>
+                <div class="patient-basic">
+                  <div class="row">
+                    <div class="col-sm-3 rounded-card card-body patient-attr">
+                      <img src="./img/termometro.svg" alt="Temperatura del paciente">
+                      <p>Temperatura</p>
+                      <p class="attr-value">35.5 ºC</p>
+                    </div>
+                    <div class="col-sm-3 rounded-card card-body patient-attr">
+                      <img src="./img/heart_rate.svg" alt="Temperatura del paciente">
+                      <p>Ritmo cardíaco</p>
+                      <p class="attr-value">102 bpm</p>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="row rounded-card card-body">3.1 of 3</div>
+                      <div class="row rounded-card card-body">3.2 of 3</div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section>
+                  <div class="container">
+                      <div class="row">
+                          <div class="col-lg-6 my-3">
+                              <div class="card rounded-0">
+                                  <div class="card-header bg-light">
+                                    <h6 class="font-weight-bold mb-0">Número de publicaciones de los últimos meses</h6>
+                                  </div>
+                                  <div class="card-body">
+                                    <canvas id="myChart" width="300" height="150"></canvas>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="col-lg-6 my-3">
+                            <div class="card rounded-0">
+                                <div class="card-header bg-light">
+                                    <h6 class="font-weight-bold mb-0">Seguidores recientes</h6>
+                                </div>
+                                <div class="card-body pt-2">
+                                    <div class="d-flex border-bottom py-2">
+                                        <div class="d-flex mr-3">
+                                          <h2 class="align-self-center mb-0"><i class="icon ion-md-person"></i></h2>
+                                        </div>
+                                        <div class="align-self-center">
+                                            <h6 class="d-inline-block mb-0">@usuario1</h6><span class="badge badge-success ml-2">1st</span>
+                                            <small class="d-block text-muted">usuario1</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex border-bottom py-2">
+                                        <div class="d-flex mr-3">
+                                          <h2 class="align-self-center mb-0"><i class="icon ion-md-person"></i></h2>
+                                        </div>
+                                        <div class="align-self-center">
+                                          <h6 class="d-inline-block mb-0">@usuario2</h6><span class="badge badge-success ml-2">1st</span>
+                                          <small class="d-block text-muted">usuario2</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex border-bottom py-2">
+                                        <div class="d-flex mr-3">
+                                          <h2 class="align-self-center mb-0"><i class="icon ion-md-person"></i></h2>
+                                        </div>
+                                        <div class="align-self-center">
+                                          <h6 class="d-inline-block mb-0">@usuario3</h6><span class="badge badge-success ml-2">3rd</span>
+                                          <small class="d-block text-muted">usuario3</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex border-bottom py-2">
+                                        <div class="d-flex mr-3">
+                                          <h2 class="align-self-center mb-0"><i class="icon ion-md-person"></i></h2>
+                                        </div>
+                                        <div class="align-self-center">
+                                          <h6 class="d-inline-block mb-0">@usuario4</h6><span class="badge badge-success ml-2">2nd</span>
+                                          <small class="d-block text-muted">usuario4</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex border-bottom py-2 mb-3">
+                                        <div class="d-flex mr-3">
+                                          <h2 class="align-self-center mb-0"><i class="icon ion-md-person"></i></h2>
+                                        </div>
+                                        <div class="align-self-center">
+                                          <h6 class="d-inline-block mb-0">@usuario5</h6><span class="badge badge-success ml-2">2nd</span>
+                                          <small class="d-block text-muted">usuario5</small>
+                                        </div>
+                                    </div>
+                                    <a href="./users.html" class="btn btn-primary w-100 align-self-center">Más información</a>
+                                </div>
+                            </div>
+                          </div>
+                      </div>
+                  </div>
+              </section>
+            <!-- /Perfil seguidor -->
+        </div>
+
+        </div>
+
+        <aside class="aside">
+          <section class="patient-section">
+            <div class="container">
+              <div class="row">
+                <div class="col-sm-3">
+                  <div class="profile-main">
+                    <img src="./img/gonzalo_profile_img.png" class="img-fluid rounded-circle avatar mr-2">
+                  </div>
+                </div>
+                <div class="col-sm-9">
+                  <div class="row patient-name">Gonzalo Martín Amador</div>
+                  <div class="row patient-age-city">21 años, Salamanca</div>
+                </div>
+              </div>
+              <div class="row attributes">
+                <div class="col patient-attr">
+                  <img src="./img/blood-bag.svg" alt="Tipo sanguíneo del paciente">
+                  <p>Sangre</p>
+                  <p class="attr-value">O+</p>
+                </div>
+                <div class="col patient-attr middle-attr">
+                  <img src="./img/scale.svg" alt="Peso del paciente">
+                  <p>Peso</p>
+                  <p class="attr-value">80 kg</p>
+                </div>
+                <div class="col patient-attr">
+                  <img src="./img/height.svg" alt="Altura del paciente">
+                  <p>Estatura</p>
+                  <p class="attr-value">180 cm</p>
+                </div>
+              </div>
+              <div class="row">
+
+              </div>
+            </div>
+          </section>
+        </aside>
+  
+    </div>
+    
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js" integrity="sha256-R4pqcOYV8lt7snxMQO/HSbVCFRPMdrhAFMH+vr9giYI=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="js/dashboard.js"></script>
+</body>
+
+</html>

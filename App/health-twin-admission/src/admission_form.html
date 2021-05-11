@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Health Twin - Patient Admission</title>
+
+    <!-- Stylesheets -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css'>
+    <link rel="stylesheet" href="./css/admission_form.css">
+
+    <!-- Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js" defer></script>
+    <script src="./js/papaparse.min.js" defer></script>
+    <script src="./js/admission_form.js" defer></script>
+</head>
+
+<body>
+
+    <header class="header">
+        <h1 class="header__title">Formulario de admisión del paciente en UCI</h1>
+    </header>
+    <div class="content">
+        <div class="content__inner">
+            <!--<div class="container">
+                <h2 class="content__title content__title--m-sm">Choose Animation Type</h2>
+                <form class="pick-animation my-4">
+                    <div class="form-row">
+                        <div class="col-5 m-auto">
+                            <select class="pick-animation__select form-control">
+                                <option value="scaleIn" selected="selected">ScaleIn</option>
+                                <option value="scaleOut">ScaleOut</option>
+                                <option value="slideHorz">SlideHorz</option>
+                                <option value="slideVert">SlideVert</option>
+                                <option value="fadeIn">FadeIn</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+                <h2 class="content__title">Use los botones «Anterior» y «Siguiente» para completar el formulario.</h2>
+            </div>-->
+            <h2 class="content__title">Use los botones «Anterior» y «Siguiente» para completar el formulario.</h2>
+            <div class="container overflow-hidden">
+                <div class="multisteps-form">
+                    <div class="row">
+                        <div class="col-12 col-lg-8 ml-auto mr-auto mb-4">
+                            <div class="multisteps-form__progress">
+                                <button class="multisteps-form__progress-btn js-active" type="button"
+                                    title="User Info">Datos generales</button>
+                                <button class="multisteps-form__progress-btn" type="button" title="Address">Constantes
+                                    vitales</button>
+                                <!-- <button class="multisteps-form__progress-btn" type="button" title="Message">Enviar
+                                </button> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-lg-8 m-auto">
+                            <form class="multisteps-form__form" novalidate>
+                                <div class="multisteps-form__panel shadow p-4 rounded bg-white js-active"
+                                    data-animation="slideHorz">
+                                    <h3 class="multisteps-form__title">Datos generales del paciente</h3>
+                                    <div class="multisteps-form__content">
+                                        <div class="form-row mt-4">
+                                            <div class="col-12 col-sm-6">
+                                                <p>NHC</p>
+                                                <input name="nhc" class="multisteps-form__input form-control" type="text" />
+                                            </div>
+                                            <div class="col-12 col-sm-6 mt-4 mt-sm-0">
+                                                <p>Fecha de ingreso en UCI</p>
+                                                <input name="icu_admission_date" class="multisteps-form__input form-control" type="date" />
+                                            </div>
+                                        </div>
+                                        <div class="form-row mt-4">
+                                            <div class="col-12 col-sm-6">
+                                                <p>Edad</p>
+                                                <input name="age" class="multisteps-form__input form-control" type="number" />
+                                            </div>
+                                            <div class="col-12 col-sm-6 mt-4 mt-sm-0">
+                                                <p>Sexo del paciente</p>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <input class="multisteps-form__input form-control"
+                                                            name="sex" type="radio" id="male"
+                                                            checked="checked" />
+                                                        <label class="sex-radio-btn" for="male">Hombre</label><br>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <input class="multisteps-form__input form-control"
+                                                            name="sex" type="radio" id="female" />
+                                                        <label class="sex-radio-btn" for="female">Mujer</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-row mt-4">
+                                            <div class="col-12 col-sm-6">
+                                                <p>Altura (cm)</p>
+                                                <input name="height" class="multisteps-form__input form-control" type="number"
+                                                    placeholder="ej: 176" />
+                                            </div>
+                                            <div class="col-12 col-sm-6 mt-4 mt-sm-0">
+                                                <p>Peso (kg)</p>
+                                                <input name="weight" class="multisteps-form__input form-control" type="number"
+                                                    placeholder="ej: 70" />
+                                            </div>
+                                        </div>
+                                        <div class="button-row d-flex mt-4">
+                                            <button class="btn btn-primary ml-auto js-btn-next" type="button"
+                                                title="Next">Siguiente</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="multisteps-form__panel shadow p-4 rounded bg-white"
+                                    data-animation="slideHorz">
+                                    <h3 class="multisteps-form__title">Constantes vitales del paciente</h3>
+                                        <form class="form-inline">
+                                            <div class="form-group">
+                                              <label for="files">Suba un fichero CSV o introduzca los datos manualmente (use el punto
+                                                como separador. Ej: 0.50):</label>
+                                              <input type="file" id="files"  class="form-control" accept=".csv" required />
+                                            </div>
+                                            <div class="form-group">
+                                             <button type="submit" id="submit-file" class="btn btn-primary">Subir el fichero</button>
+                                             </div>
+                                        </form>
+                                    <div class="multisteps-form__content">
+                                        <div class="vitals-form">
+                                            <script>
+                                                var vitals = ['ALT-GPT', 'AST-GOT', 'BEecf_amax', 'BEecf_amin', 'BEecf_mean',
+                                                    'Basófilos', 'Bicarbonato', 'Bicarbonato Real_amax', 'Bicarbonato Real_amin',
+                                                    'Bicarbonato Real_mean', 'Bilirrubina T.', 'CK', 'CO2 Total_amax',
+                                                    'CO2 Total_amin', 'CO2 Total_mean', 'Cloro', 'Creatinina', 'Dimero D',
+                                                    'Eosinófilos', 'Exc. Bases_amax', 'Exc. Bases_amin', 'Exc. Bases_mean',
+                                                    'FR_pautada_max', 'FR_pautada_mean', 'FR_pautada_min', 'FR_real_max',
+                                                    'FR_real_mean', 'FR_real_min', 'Ferritina', 'FiO2_max', 'FiO2_mean',
+                                                    'FiO2_min', 'Fibrinógeno', 'Glucosa', 'HB', 'HCO3_amax', 'HCO3_amin',
+                                                    'HCO3_mean', 'INR', 'LDH', 'Lactato', 'Leucocitos', 'Linfocitos',
+                                                    'Monocitos', 'Neutrófilos', 'PCR', 'PEEP_max', 'PEEP_mean', 'PEEP_min',
+                                                    'PVA_med_max', 'PVA_med_mean', 'PVA_med_min', 'PVA_máx', 'PVA_máx_max',
+                                                    'PVA_máx_min', 'Ph Arterial_amax', 'Ph Arterial_amin',
+                                                    'Ph Arterial_mean', 'Plaquetas', 'Potasio', 'Procalcitoni.',
+                                                    'Sat. O2_amax', 'Sat. O2_amin', 'Sat. O2_mean', 'Sodio', 'TP seg.',
+                                                    'TTPA', 'Troponina', 'Urea (mg/dl)', 'VT_espirado_max',
+                                                    'VT_espirado_mean', 'VT_espirado_min', 'pCO2_amax', 'pCO2_amin',
+                                                    'pCO2_mean', 'pO2_amax', 'pO2_amin', 'pO2_mean'];
+                                                
+                                                var vitalsNames = ["alt_gpt", "ast_got", "beecf_amax", "beecf_amin", "beecf_mean",
+                                                                   "basophils", "bicarb", "bicarb_real_amax", "bicarb_real_amin",
+                                                                   "bicarb_real_mean", "bilirubin_t", "ck", "co2_total_amax",
+                                                                   "co2_total_amin", "co2_total_mean", "chlorine", "creatinine",
+                                                                   "dimer_d", "eosinophils", "exc_bases_amax", "exc_bases_amin", 
+                                                                   "exc_bases_mean", "fr_established_max", "fr_established_mean",
+                                                                   "fr_established_min", "fr_real_max", "fr_real_mean", "fr_real_min",
+                                                                   "ferritin", "fio2_max", "fio2_mean", "fio2_min", "fibrinogen",
+                                                                   "glucose", "hb", "hco3_amax", "hco3_amin", "hco3_mean", "inr",
+                                                                   "ldh", "lactate", "leukocytes", "lymphocytes", "monocytes",
+                                                                   "neutrophils", "pcr", "peep_max", "peep_mean", "peep_min",
+                                                                   "pva_avg_max", "pva_avg_mean", "pva_avg_min", "pva_max",
+                                                                   "pva_max_max", "pva_max_min", "ph_arterial_amax", "ph_arterial_amin",
+                                                                   "ph_arterial_mean", "platelets", "potassium", "procalcitonin",
+                                                                   "sat_o2_amax", "sat_o2_amin", "sat_o2_mean", "sodium", "tp_track",
+                                                                   "ttpa", "troponin", "urea_mg_dl", "vt_exhaled_max", "vt_exhaled_mean",
+                                                                   "vt_exhaled_min", "pco2_amax", "pco2_amin", "pco2_mean", "po2_amax",
+                                                                   "po2_amin", "po2_mean"];
+
+                                                var vitalsDict =  vitalsNames.reduce(function(vitalsDict, field, index) {
+                                                    vitalsDict[vitals[index]] = field;
+                                                    return vitalsDict;
+                                                }, {})
+
+                                                var text = "";
+
+                                                var i = 0;
+                                                for (var[vital, vitalName] of Object.entries(vitalsDict)) {
+
+                                                    if (i == 2) {
+                                                        i = -1;
+                                                        text += '<div class=' + "col-4" + '>';
+                                                        text += '<p>' + vital + '</p>';
+                                                        text += '<input class=' + "multisteps-form__input form-control" + ' name="' + vitalName + '" type=' + "number" + '/>';
+                                                        text += '</div>';
+                                                        text += '</div>';
+                                                    }
+                                                    else if (i == 0) {
+                                                        text += '<div class=' + "form-row mt-4" + '>';
+                                                        text += '<div class=' + "col-4" + '>';
+                                                        text += '<p>' + vital + '</p>';
+                                                        text += '<input class=' + "multisteps-form__input form-control" + ' name="' + vitalName + '" type=' + "number" + '/>';
+                                                        text += '</div>';
+                                                    }
+                                                    else {
+                                                        text += '<div class=' + "col-4" + '>';
+                                                        text += '<p>' + vital + '</p>';
+                                                        text += '<input class=' + "multisteps-form__input form-control" + ' name="' + vitalName + '" type=' + "number" + '/>';
+                                                        text += '</div>';
+                                                    }
+
+                                                    i++;
+                                                }
+                                                document.write(text);
+                                            </script>
+                                        </div>
+
+                                        <div class="button-row d-flex mt-4">
+                                            <button class="btn btn-primary js-btn-prev" type="button"
+                                                title="Prev">Anterior</button>
+                                            <button class="btn btn-success ml-auto js-btn-next" type="submit"
+                                                title="Next">Enviar</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- <div class="multisteps-form__panel shadow p-4 rounded bg-white"
+                                    data-animation="slideHorz">
+                                    <h3 class="multisteps-form__title">Enviar los datos</h3>
+                                    <div class="multisteps-form__content">
+                                        <div class="form-row mt-4">
+                                            <p>¿Está seguro de que quiere enviar los datos?</p>
+                                        </div>
+                                        <div class="button-row d-flex mt-4">
+                                            <button class="btn btn-primary js-btn-prev" type="button"
+                                                title="Prev">Anterior</button>
+                                            <button class="btn btn-success ml-auto js-btn-next" type="button"
+                                                title="Send">Enviar</button>
+                                        </div>
+                                    </div>
+                                </div> -->
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

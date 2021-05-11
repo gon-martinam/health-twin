@@ -1,0 +1,224 @@
+body {
+    position: relative;
+}
+
+:root {
+    --primary:#316EE7;
+    --light: #F2F6F9;
+    --grey: #efefef;
+}
+
+body {
+    overflow: hidden;
+    font-family: 'Muli', sans-serif;
+    font-weight: 300;
+    color: var(--primary);
+}
+
+.tab-title {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+img.logo-ht {
+    width: 60px;
+    height: 56px;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.bg-primary { background-color: var(--primary) !important; }
+
+.bg-light { background-color: var(--light) !important; }
+
+.bg-grey { background-color: var(--grey) !important; }
+
+.bg-mix { background: linear-gradient(180deg, var(--light) 50%, var(--grey) 0); }
+
+.btn-primary {
+    background-color: var(--primary);
+    border: 0;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary);
+}
+
+#sidebar-container {
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+  
+#sidebar-container .logo{
+    padding: 0.875rem 1.25rem;
+}
+
+#content {
+    overflow-y: auto;
+    height: 100vh;
+    padding-bottom: 5rem;
+}
+
+.avatar {
+    max-width: 35px;
+}
+
+.btn-search {
+    right: 0;
+}
+
+.stat {
+    border-right: 1px solid var(--grey);
+}
+
+.btnHelp {
+    border: 2px solid;
+    background-color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.btnHelp:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+.menu {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+.menu a:hover {
+    color: #737C83 !important;
+}
+
+.menu a i {
+    font-size: 50px;
+    margin: 0;
+    padding: 0;
+}
+
+a.active {
+    background-color: #477FEE !important;
+    border-left: #FFFFFF;
+    border-width: 5px;
+}
+
+.rounded-card {
+    border-radius: 15px;
+    background-color: #FFFFFF;
+}
+
+.patient-basic {
+    margin: 0 15px;
+    padding: 0 15px;
+}
+
+.aside {
+    width: 50rem;
+    background-color: #FFFFFF;
+}
+
+.patient-section .container {
+    padding: 0;
+}
+
+.patient-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #000;
+}
+
+.patient-age-city {
+    font-size: 14px;
+    color: #a1a1a1;
+}
+
+.attributes {
+    margin: 15px 0;
+}
+
+.patient-basic .rounded-card {
+    background-color: #FFFFFF !important;
+}
+
+.patient-basic .rounded-card .attr-value {
+    font-size: 25px;
+}
+
+.patient-attr {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #F5F5F7;
+    border-radius: 10px;
+}
+
+.patient-attr p {
+    color: black;
+    font-size: 14px;
+}
+
+.attr-value {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.middle-attr {
+    margin: 0 15px;
+}
+
+.patient-attr img {
+    width: 25px;
+    height: 25px;
+    margin: 10px 0;
+}
+
+
+@media (max-width: 1800px) {
+    .aside {
+      width: 27rem;
+      padding: 2.5rem 1.5rem;
+    }
+}
+
+@media (max-width: 1400px) {
+    .aside {
+      width: 24rem;
+      padding: 1.5rem 1rem;
+    }
+}  
+
+@media (max-width: 992px) {
+    .aside {
+      width: 100%;
+      order: 1;
+      padding: 2rem 1rem 4rem;
+    }
+}
+
+@media (max-width: 768px) {
+    #sidebar-container {
+      display: none;
+    }
+    .stat {
+        border: 0;
+    }
+} 
