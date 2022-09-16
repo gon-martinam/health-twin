@@ -32,11 +32,10 @@ This application only receives the medical data of the patients, i.e. there is n
 
 🚩 - The main challenges were to achieve an acceptable Machine Learning model (78 % AUC) with so little patient data and to be able to integrate the whole system within AWS with a CQRS pattern.
 
-## How to use the project
-There is no executable. The notebook with the movie recommender system can be found in the "src" folder.
-
 ## Future lines of research
-- [ ] Improving the recommendations by modifying some of the parameters.
-- [ ] Adding the genres to improve the actual recommendation system.
-- [ ] Adding the option of getting recommendations based on the genre.
-- [ ] Including metadata and tags data from the other CSV to improve the recommendations.
+- Spark cluster environment.
+- Working with time series.
+- Inclusion of a validation set.
+- Research on techniques used to reduce overfitting in data-poor models.
+- Inclusion of new use cases.
+- Replacing DynamoDB with Aurora for the patient status database.
