@@ -28,7 +28,7 @@ This application only receives the medical data of the patients, i.e. there is n
 - To make all this possible, research is being carried out on the different technologies that underpin the project, with special emphasis on those related to the creation, evaluation and interpretation of Machine Learning models. The analysis and development of the system architecture is a fundamental part of the work, comprising the description of the system, its modelling and its implementation with the services offered by Amazon Web Services. Two applications are also developed, each with its own graphical interface, which are used by the healthcare personnel to make use of the different resources of the system.
 - A CQRS pattern has been used for the design of the system architecture in AWS.
 
-![CQRS pattern diagram](https://github.com/gon99martin/health-twin/blob/master/img/cqrs_patterncqrs_server_dynamodb.drawio.png?raw=true)
+![CQRS pattern diagram](https://github.com/gon99martin/health-twin/blob/master/img/cqrs_pattern-cqrs_server_dynamodb.drawio.png?raw=true)
 
 🛠 - Jupyter Notebooks have been used because of their ease of use and convenience for exploratory data analysis, along with the Python language.
 
