@@ -1,0 +1,147 @@
+service: sless-cqrs-patients
+
+plugins:
+  - serverless-offline-sns
+  - serverless-dynamodb-local
+  - serverless-offline
+
+custom:
+  dynamodb:
+    start:
+      migrate: true
+  serverless-offline-sns:
+    port: 4002
+    debug: true
+
+provider:
+  name: aws
+  stage: dev
+  region: eu-west-3
+  runtime: nodejs12.x
+  environment:
+    AWS_ACCOUNT_ID: '${ssm:accountId}'
+    EVENTS_PATIENTS_TABLE: 'patients-events-table-${self:provider.stage}'
+    STATE_PATIENTS_TABLE: 'patients-state-table-${self:provider.stage}'
+    SERVERLESS_REGION: eu-west-3
+    SQS_QUEUE_URL: { Ref: CreatePatientQueue}
+  # Permisos asignados a los diferentes servicios empleados
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - "sns:*"
+        - "sqs:*"
+      Resource:
+        - { "Fn::GetAtt": ["EventsPatientsDynamoDBTable", "Arn" ] }
+        - { "Fn::GetAtt": ["StatePatientsDynamoDBTable", "Arn" ] }
+        - "arn:aws:sns:eu-west-3:${ssm:accountId}:create-patient"
+        - { "Fn::GetAtt": [ "CreatePatientQueue", "Arn"] }
+
+# Funciones lambda
+functions:
+  commandCreatePatient:
+    handler: commands.createPatient
+    events:
+      - http: 'POST /patients'
+  queryGetPatients:
+    handler: queries.getPatients
+    events:
+      - http: 'GET /patients'
+  queryGetPatient:
+    handler: queries.getPatient
+    events:
+      - http: 'GET /patients/{id}'
+  communicationSaveEventCreatePatient:
+    handler: communications.saveEventCreatePatient
+    events:
+      - sns:
+          topicName: create-patient
+          displayName: "Patient create events"
+  communicationSaveStatePatient:
+    handler: communications.saveStatePatient
+    events:
+      - sns:
+          topicName: create-patient
+          displayName: "Patient create events"
+  communicationSaveStatePredictedPatient:
+    handler: communications.saveStatePredictedPatient
+
+# Recursos de la arquitectura
+resources:
+  Resources:
+    # Definición de la cola SQS que conecta SNS con Elastic Beanstalk
+    CreatePatientQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: sqs-queue-create-patient
+    # Definición de la suscripción que permite a la cola SQS recibir eventos de SNS
+    Subscription:
+      Type: 'AWS::SNS::Subscription'
+      Properties:
+        TopicArn: "arn:aws:sns:eu-west-3:${ssm:accountId}:create-patient"
+        Endpoint: !GetAtt 
+          - CreatePatientQueue
+          - Arn
+        Protocol: sqs
+        RawMessageDelivery: 'true'
+    # Asignación de permisos a la conexión SNS -> SQS
+    AllowSNS2SQSPolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        Queues: [!Ref 'CreatePatientQueue']
+        PolicyDocument:
+          Version: '2008-10-17'
+          Id: PublicationPolicy
+          Statement:
+          - Sid: Allow-SNS-SendMessage
+            Effect: Allow
+            Principal:
+              AWS: '*'
+            Action: ['sqs:SendMessage']
+            Resource: !GetAtt [CreatePatientQueue, Arn]
+            Condition:
+              ArnEquals:
+                aws:SourceArn: "arn:aws:sns:eu-west-3:${ssm:accountId}:create-patient"
+    AllowInvokeSavePatientStateLambda:
+      Type: AWS::Lambda::Permission
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName: "arn:aws:lambda:eu-west-3:XXXXXXX:function:sless-cqrs-patients-dev-communicationSaveStatePredictedPatient"
+        Principal: ${ssm:accountId}
+
+    # Definición de las bases de datos DynamoDB de eventos y estados
+    EventsPatientsDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        TableName: '${self:provider.environment.EVENTS_PATIENTS_TABLE}'
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    StatePatientsDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        TableName: '${self:provider.environment.STATE_PATIENTS_TABLE}'
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
