@@ -27,7 +27,7 @@ This application only receives the medical data of the patients, i.e. there is n
 - This project is a computing solution based on cloud architecture and Artificial Intelligence (AI), which can, using Machine Learning algorithms such as random forest, predict the range of days remaining until a patient is discharged from hospital based on their medical data. The application also makes use of serverless computing. This solution will also predict and classify the patient's condition, allowing healthcare staff to make the right decisions to ensure the patient has the best possible recovery.
 - To make all this possible, research is being carried out on the different technologies that underpin the project, with special emphasis on those related to the creation, evaluation and interpretation of Machine Learning models. The analysis and development of the system architecture is a fundamental part of the work, comprising the description of the system, its modelling and its implementation with the services offered by Amazon Web Services. Two applications are also developed, each with its own graphical interface, which are used by the healthcare personnel to make use of the different resources of the system.
 - A CQRS pattern has been used for the design of the system architecture in AWS.
-![alt text](https://github.com/gon99martin/health-twin/blob/master/cqrs_pattern-CQRS with server and 2 DynamoDB.drawio.png?raw=true)
+![alt text]("https://github.com/gon99martin/health-twin/blob/master/cqrs_pattern-CQRS with server and 2 DynamoDB.drawio.png?raw=true")
 
 🛠 - Jupyter Notebooks have been used because of their ease of use and convenience for exploratory data analysis, along with the Python language.
 
