@@ -26,9 +26,11 @@ This application only receives the medical data of the patients, i.e. there is n
 ## Project description ✏️ 
 - This project is a computing solution based on cloud architecture and Artificial Intelligence (AI), which can, using Machine Learning algorithms such as random forest, predict the range of days remaining until a patient is discharged from hospital based on their medical data. The application also makes use of serverless computing. This solution will also predict and classify the patient's condition, allowing healthcare staff to make the right decisions to ensure the patient has the best possible recovery.
 - To make all this possible, research is being carried out on the different technologies that underpin the project, with special emphasis on those related to the creation, evaluation and interpretation of Machine Learning models. The analysis and development of the system architecture is a fundamental part of the work, comprising the description of the system, its modelling and its implementation with the services offered by Amazon Web Services. Two applications are also developed, each with its own graphical interface, which are used by the healthcare personnel to make use of the different resources of the system.
+- A CQRS pattern has been used for the design of the system architecture in AWS.
+
 🛠 - Jupyter Notebooks have been used because of their ease of use and convenience for exploratory data analysis, along with the Python language.
 
-🚩 - The main challenge was to understand how to find the similarity between a given movie and the rest of the movies, because not all the movies well rated may be of my interest (e.g. Toy Story is very well rated. However, that doesn't mean I'd be interested in it, but that it's a very beloved movie by everyone).
+🚩 - The main challenges were to achieve an acceptable Machine Learning model (78 % AUC) with so little patient data and to be able to integrate the whole system within AWS with a CQRS pattern.
 
 ## How to use the project
 There is no executable. The notebook with the movie recommender system can be found in the "src" folder.
